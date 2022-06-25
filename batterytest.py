@@ -40,3 +40,6 @@ while True:
     sheet.append(row)
     
     wb.save('/home/pi/Documents/Battery_Test_lithium.xlsx')
+    
+message = input("Press enter to quit\n\n")
+GPIO.cleanup()
