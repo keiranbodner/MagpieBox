@@ -1,84 +1,25 @@
-import RPi.GPIO as GPIO          
-from time import sleep
+import RPi.GPIO as GPIO
 
-in1 = 24
-in2 = 23
-en = 25
-temp1=1
+BEAM_OFF= 21
+BEAM_ON= 20
+
+def break_beam_callback(channel):
+    if GPIO.input(BEAM_OFF):
+        print("beam1 unbroken")
+    else:
+        print("beam1 broken")
+
+def break_beam_callback1(channel):
+    if GPIO.input(BEAM_ON):
+        print("beam2 unbroken")
+    else:
+        print("beam2 broken")
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(in1,GPIO.OUT)
-GPIO.setup(in2,GPIO.OUT)
-GPIO.setup(en,GPIO.OUT)
-GPIO.output(in1,GPIO.LOW)
-GPIO.output(in2,GPIO.LOW)
-p=GPIO.PWM(en,1000)
+GPIO.setup(BEAM_OFF, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(BEAM_OFF, GPIO.BOTH, callback=break_beam_callback)
+GPIO.setup(BEAM_ON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(BEAM_ON, GPIO.BOTH, callback=break_beam_callback1)
 
-p.start(25)
-print("\n")
-print("The default speed & direction of motor is LOW & Forward.....")
-print("r-run s-stop f-forward b-backward l-low m-medium h-high e-exit")
-print("\n")    
-
-while(1):
-
-    x=raw_input()
-    
-    if x=='r':
-        print("run")
-        if(temp1==1):
-         GPIO.output(in1,GPIO.HIGH)
-         GPIO.output(in2,GPIO.LOW)
-         print("forward")
-         x='z'
-        else:
-         GPIO.output(in1,GPIO.LOW)
-         GPIO.output(in2,GPIO.HIGH)
-         print("backward")
-         x='z'
-
-
-    elif x=='s':
-        print("stop")
-        GPIO.output(in1,GPIO.LOW)
-        GPIO.output(in2,GPIO.LOW)
-        x='z'
-
-    elif x=='f':
-        print("forward")
-        GPIO.output(in1,GPIO.HIGH)
-        GPIO.output(in2,GPIO.LOW)
-        temp1=1
-        x='z'
-
-    elif x=='b':
-        print("backward")
-        GPIO.output(in1,GPIO.LOW)
-        GPIO.output(in2,GPIO.HIGH)
-        temp1=0
-        x='z'
-
-    elif x=='l':
-        print("low")
-        p.ChangeDutyCycle(25)
-        x='z'
-
-    elif x=='m':
-        print("medium")
-        p.ChangeDutyCycle(50)
-        x='z'
-
-    elif x=='h':
-        print("high")
-        p.ChangeDutyCycle(75)
-        x='z'
-     
-    
-    elif x=='e':
-        GPIO.cleanup()
-        print("GPIO Clean up")
-        break
-    
-    else:
-        print("<<<  wrong data  >>>")
-        print("please enter the defined data to continue.....")
+message = input("Press enter to quit\n\n")
+GPIO.cleanup()
