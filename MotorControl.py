@@ -76,7 +76,6 @@ def motor_on_callback(channel):
 
     else:
         print("beam2 broken")
-        STOP_MOTOR = False # Assume the motor is stopped before this, and reset the signal.
 
         start = time.time() # Start time
         now = start
@@ -88,13 +87,17 @@ def motor_on_callback(channel):
         # If food drops before 5 seconds, we do not need to go to high speed, instead, the other callback is triggered and we stop.
         while now - start <= 5:
             now = time.time() # Update now.
-            if STOP_MOTOR is True:
-                STOP_MOTOR = False # Reset stop STOP_MOTOR variable
-                return
+            if not GPIO.input(BEAM_OFF):
+                motor_control.stop()
         # Will exit the loop here after 5 and continue if STOP_MOTOR has not been called.
 
         # after five seconds goes to high speed and set Duty Cycle to 100
         motor_control.ChangeDutyCycle(100)
+
+        while GPIO.input(BEAM_OFF):
+            continue
+
+        motor_control.stop()
 
         # This will continue until motor_off callback is called and when sensor 1 is broken.
             
@@ -107,8 +110,8 @@ if __name__ == "__main__":
     print("Starting Sensors")
 
 
-    GPIO.setup(BEAM_OFF, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(BEAM_OFF, GPIO.BOTH, callback=motor_off_callback)
+    # GPIO.setup(BEAM_OFF, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    # GPIO.add_event_detect(BEAM_OFF, GPIO.BOTH, callback=motor_off_callback)
 
     GPIO.setup(BEAM_ON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(BEAM_ON, GPIO.BOTH, callback=motor_on_callback)
