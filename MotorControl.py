@@ -87,7 +87,9 @@ def motor_on_callback(channel):
         # If food drops before 5 seconds, we do not need to go to high speed, instead, the other callback is triggered and we stop.
         while now - start <= 5:
             now = time.time() # Update now.
-            if not GPIO.input(BEAM_OFF):
+            if GPIO.input(BEAM_OFF):
+                pass
+            else:
                 motor_control.stop()
         # Will exit the loop here after 5 and continue if STOP_MOTOR has not been called.
 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     print("Starting Sensors")
 
 
-    # GPIO.setup(BEAM_OFF, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BEAM_OFF, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     # GPIO.add_event_detect(BEAM_OFF, GPIO.BOTH, callback=motor_off_callback)
 
     GPIO.setup(BEAM_ON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
