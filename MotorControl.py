@@ -88,7 +88,7 @@ def motor_on_callback(channel):
         while now - start <= 5:
             now = time.time() # Update now.
             if GPIO.input(BEAM_OFF):
-                pass
+                continue
             else:
                 motor_control.stop()
         # Will exit the loop here after 5 and continue if STOP_MOTOR has not been called.
