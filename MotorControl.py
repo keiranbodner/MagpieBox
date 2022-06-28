@@ -94,7 +94,7 @@ def motor_on_callback(channel):
         # after five seconds goes to high speed and set Duty Cycle to 100
         motor_control.ChangeDutyCycle(100)
 
-        while GPIO.input(BEAM_OFF):
+        while not GPIO.input(BEAM_OFF):
             continue
 
         motor_control.stop()
